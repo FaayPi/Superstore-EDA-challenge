@@ -1,0 +1,110 @@
+# Exploratory Data Analysis (EDA) for Superstore Dataset
+
+## Objective
+In this analysis, we will explore the Superstore dataset to answer key business questions and derive actionable insights. Our goal is to identify trends, seasonal patterns, product category performance, regional comparisons, customer segmentation, and the effect of shipping mode on profitability.
+
+## Question 1: How does sales performance vary over time?
+### Objective: Identify monthly trends and seasonal patterns.
+#### Tasks:
+1. **Identify which months consistently show sales peaks:**
+   - We will analyze sales data over time to find recurring sales peaks in certain months.
+2. **Find any unusual dips in the trend line:**
+   - Using visualizations, we will pinpoint any dips or anomalies in the sales trends.
+3. **(Optional) Calculate YOY (Year Over Year) growth rate for the most recent complete year:**
+   - We will calculate the YOY growth rate to understand the annual growth trend.
+4. **Suggest potential reasons for seasonal patterns:**
+   - Based on the data, we will explore potential reasons such as holidays, marketing campaigns, or regional trends.
+
+### Expected Outcome:
+- Visual representation of monthly sales trends.
+- Analysis of factors contributing to seasonal peaks and dips.
+
+## Question 2: Which product categories have the best/worst profit margins?
+### Objective: Identify high/low performing product categories.
+#### Tasks:
+1. **Identify which category has the thinnest margins:**
+   - We will calculate profit margins for each product category and identify the category with the lowest margin.
+2. **Calculate the profit margin difference between top and bottom categories:**
+   - We will quantify the margin difference between the highest and lowest performing categories.
+3. **Suggest strategies to improve low-performing categories:**
+   - Based on the analysis, we will propose strategies such as pricing adjustments or cost reduction.
+
+### Expected Outcome:
+- Identification of product categories with the best and worst profit margins.
+- Strategic recommendations to improve low-performing categories.
+
+## Question 3: How do regional performances compare?
+### Objective: Compare sales distribution and profitability across regions.
+#### Tasks:
+1. **Identify which region has both high sales and high profitability:**
+   - We will compare sales and profits across regions to identify the best-performing regions.
+2. **Find any regions with negative profits:**
+   - We will identify regions where the company is operating at a loss.
+3. **Analyze if high sales always correlate with high profits:**
+   - We will investigate whether higher sales lead to higher profits or if there are discrepancies.
+4. **Propose regional-specific strategies based on findings:**
+   - We will provide recommendations for each region based on performance analysis.
+
+### Expected Outcome:
+- Comparison of regional sales and profitability.
+- Recommendations for region-specific strategies.
+
+## Question 4: What does customer segmentation reveal?
+### Objective: Identify valuable customer groups using RFM analysis (Recency, Frequency, Monetary).
+#### Tasks:
+1. **Calculate percentage of customers in each segment:**
+   - We will segment customers into categories based on recency, frequency, and monetary value, and calculate the percentage of customers in each segment.
+2. **Identify which segment generates the most revenue:**
+   - We will determine which customer segment contributes the most to overall revenue.
+3. **Develop retention strategies for “At Risk” customers:**
+   - Based on the segmentation, we will propose retention strategies for customers who are likely to stop purchasing.
+4. **Suggest marketing approaches for “High Spenders”:**
+   - We will provide marketing strategies to target high-value customers.
+
+### Expected Outcome:
+- Segmentation of customers into RFM categories.
+- Marketing and retention strategies based on customer segmentation.
+
+## Question 5: How does shipping mode affect profitability?
+### Objective: Analyze cost-to-serve across shipping modes.
+#### Tasks:
+1. **Compare profit margins across shipping modes:**
+   - We will compare the profit margins for different shipping modes.
+2. **Calculate profit per order for each shipping mode:**
+   - We will calculate the profit for each order based on the shipping mode used.
+3. **Suggest optimal shipping strategy based on findings:**
+   - We will provide recommendations for the most cost-effective shipping mode based on profit analysis.
+
+### Expected Outcome:
+- Comparison of profit margins for different shipping modes.
+- Recommendations for optimizing the shipping strategy.
+
+## Extra Challenge:
+### Identify 3 actionable business recommendations.
+- Based on the insights from the analysis, we will propose three actionable business recommendations.
+  
+### Propose 2 new questions for deeper analysis.
+- We will propose two additional questions that could provide further insights into business performance.
+
+### Estimate potential financial impact of your recommendations.
+- We will estimate the financial impact of the proposed business recommendations.
+
+## Discussion Points:
+- **How do sales trends correlate with marketing initiatives?**
+  - We will analyze whether sales peaks align with marketing campaigns or seasonal promotions.
+- **Are there regional preferences for product categories?**
+  - We will explore if certain regions prefer specific product categories and tailor strategies accordingly.
+- **What operational changes could improve low-margin categories?**
+  - We will discuss ways to improve profitability in categories with thin margins, such as adjusting product pricing or cutting costs.
+- **How might customer segmentation affect inventory management?**
+  - We will consider how inventory can be optimized based on the demand from different customer segments.
+
+## Deliverables:
+- The completed notebook with all analysis, visualizations, and business insights.
+  
+## Submission:
+- Upload the notebook to your GitHub repository.
+- Commit and push the changes to your branch.
+- Create a pull request and submit the link in the Student Portal.
+
+Good luck with the analysis and have fun exploring the dataset!
