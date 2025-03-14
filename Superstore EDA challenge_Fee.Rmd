@@ -1,0 +1,256 @@
+# Setup
+Loading necessary libraries
+```{r}
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+```
+
+Reading the data
+```{r}
+superstore <- read.csv("C:\\Users\\fee10\\Ironhack\\Module2\\Labs\\lab-r-dataframes\\dataset\\Sample - Superstore.csv")
+```
+
+# Question 1: How does sales performance vary over time?
+
+## Identification of monthly trends and seasonal patterns
+
+### Months that consistenty show sales peaks.
+
+Changing Order.Date type from factor to date
+```{r}
+superstore <- superstore %>%
+  mutate(Order.Date = as.Date(Order.Date, format="%m/%d/%Y"))
+```
+
+Creating Month_Year and Year variables
+```{r}
+sales_by_months <- superstore %>%
+  mutate(Month_Year = format(Order.Date, "%m/%Y")) %>%
+  mutate(Year = format(Order.Date, "%Y"))
+```
+
+Grouping sales by month
+```{r}
+grouped_sales_months <- sales_by_months %>%
+  filter(!is.na(Sales)) %>%
+  group_by(Month_Year) %>%
+  summarise(Total_Sales = sum(Sales, na.rm = TRUE), .groups = "drop") %>%
+  mutate(Month_Year = factor(Month_Year, levels = unique(Month_Year)))
+```
+
+Converting Month_Year from factor to date
+```{r}
+grouped_sales_months <- grouped_sales_months %>%
+  mutate(Month_Year = dmy(paste("01", Month_Year, sep = "/")))
+```
+
+Plotting data with trendline
+```{r}
+ggplot(grouped_sales_months, aes(x = Month_Year, y = Total_Sales)) +
+  geom_line(color = "blue") +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  geom_point() +
+  labs(title = "Monthly Sales Performance Over Time", x = "Month/Year", y = "Total Sales") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 80, hjust = 1))
+```
+
+### YOY growth rate for the most recent complete year in % (2017)
+```{r}
+Sales_2017_start <- grouped_sales_months$Total_Sales[grouped_sales_months$Month_Year == "2017-01-01"]
+Sales_2017_end <- grouped_sales_months$Total_Sales[grouped_sales_months$Month_Year == "2017-12-01"]
+
+growth_rate <- round(((Sales_2017_end / Sales_2017_start) * 100), 2)
+print(growth_rate)
+```
+
+
+###Potential reasons for seasonal patterns
+The seasonal patterns observed in our dataset, with two prominent peaks in the second half of each year, can likely be attributed to several factors. One major factor could be the intense shopping events, such as Christmas and Black Friday week, which typically drive a surge in consumer spending. Additionally, these peaks coincide with the colder months when people are more likely to stay indoors, leading to an increase in online shopping as they spend more time in front of their laptops.
+
+
+# Question 2: Which product categories have the best/worst profit margins?
+
+## High and low performing categories
+
+### Product category with thinnest margin in %
+```{r}
+Margins_by_category <- superstore %>%
+  filter(if_all(c(Sales, Profit), ~ !is.na(.))) %>%
+  group_by(Category) %>%
+  summarise(Net_Margin = round((sum(Profit) / sum(Sales)) * 100, 2))
+
+Margins_by_category %>%
+  slice_min(Net_Margin) %>%
+  print()
+```
+
+
+### Profit margin difference between top and bottom categories in %
+```{r}
+profit_margin_difference <- Margins_by_category %>%
+  summarise(
+    max_margin = max(Net_Margin),
+    min_margin = min(Net_Margin),
+    difference = round((max_margin / min_margin),2)
+  )
+
+print(profit_margin_difference)
+```
+
+### Proposed strategies to improve low-performing categories:
+
+1. Product-Specific Black Friday Promotions: Offer exclusive Black Friday deals for specific low-performing products, creating special discounts or bundles to drive attention and sales during the event.
+
+2. Influencer and Micro-Influencer Collaborations: Partner with niche influencers to promote these products, targeting a specific audience who might be more interested in these categories.
+
+3. Interactive Online Experiences: Create interactive online experiences or product demos to engage customers and showcase the value of the low-performing products in a more engaging way.
+
+# Question 3: How do regional performances compare?
+
+## Comparision of sales distribution and profitability across region
+
+### Region with highest sales and highest profitability in €
+```{r}
+Sales_and_Profit_by_Region <- superstore %>%
+  group_by(Region) %>%
+  summarise(
+    Total_Sales = sum(Sales),
+    Total_Profit = sum(Profit)
+  )
+
+best_performing_region <- Sales_and_Profit_by_Region %>%
+  filter(Region == Region[which.max(Total_Sales + Total_Profit)])
+
+print(best_performing_region)
+```
+
+### Regions with total negative profits?
+```{r}
+region_negative_profit <- Sales_and_Profit_by_Region %>%
+  filter(Total_Profit < 0)
+
+print(region_negative_profit)
+```
+
+### Correlation between sales and profits
+```{r}
+correlation_test_profit_sales <- cor.test(superstore$Sales, superstore$Profit)
+
+cat("p-value:", round(correlation_test_profit_sales$p.value, 4))  # p-value of 0 indicates strong correlation
+```
+
+Plotting correlation between sales and profits
+```{r}
+ggplot(superstore, aes(x = Sales, y = Profit)) +
+  geom_line(color = "blue") +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  labs(title = "Correlation between Sales and Profit", x = "Sales", y = "Profit") +
+  theme_minimal()
+```
+
+### Proposed regional-specific strategies:
+1. Targeted Marketing Campaigns: Since high sales are strongly correlated with high profits in this region, invest in targeted marketing campaigns that emphasize the quality and benefits of products. Leverage regional trends and preferences to boost sales further, capitalizing on the existing strong sales momentum to drive even greater profits.
+
+2. Exclusive Promotions and Loyalty Programs: Focus on exclusive promotions and loyalty programs that reward customers in this high-performing region. By offering special discounts or rewards for repeat customers, you can increase both sales and profit, strengthening the correlation even more and encouraging customers to continue purchasing.
+
+
+# Question 4: What does customer segmentation reveal?
+
+## Valuable customer groups using RFM analysis
+
+### Percentage of customers in each segment
+```{r}
+customer_segments <- superstore %>%
+  group_by(Segment) %>%
+  summarise(Customer_Count = n()) %>%
+  mutate(Customer_Percentage = round((Customer_Count/sum(Customer_Count))*100,0))
+
+print(customer_segments)
+```
+
+### Segment with highest revenue in €
+```{r}
+revenue_by_segment <- superstore %>%
+  group_by(Segment) %>%
+  summarise(
+    Total_Revenue = sum(Sales)
+  )
+
+best_performing_segment <- revenue_by_segment %>%
+  filter(Segment == Segment[which.max(Total_Revenue)])
+
+print(best_performing_segment)
+```
+
+### Retention strategies for “At Risk” customers
+1. Exclusive Offers and Discounts: Provide special offers, discounts, or loyalty rewards to at-risk customers to encourage them to stay and make another purchase.
+
+2. Personalized Communication: Send personalized emails or messages that address the customer's specific needs or issues, showing them that their business is valued and offering tailored solutions or incentives.
+
+
+### Suggested marketing approaches for “High Spenders”
+
+1. Amazon Prime Exclusive Benefits: Enhance the value of Amazon Prime for high spenders by offering them exclusive perks, such as early access to lightning deals, additional discounts, or unique content in Amazon Prime Video and Amazon Music. This reinforces the value of their subscription and incentivizes continued spending.
+
+2. Exclusive Deals and Flash Sales: Invite high spenders to participate in exclusive deals or flash sales events, where they can access discounts on top-selling or luxury items. Highlight these special offers via email or app notifications to ensure they don’t miss out.
+
+# Question 5: How does shipping mode affect profitability?
+
+## Cost-to-serve across shipping modes
+
+### Profit margins across shipping modes in %
+```{r}
+Margins_by_ship_mode <- superstore %>%
+  filter(if_all(c(Sales, Profit), ~ !is.na(.))) %>% 
+  group_by(Ship.Mode) %>%
+  summarise(Net_Margin =round((sum(Profit) / sum(Sales)) * 100, 2))
+
+print(Margins_by_ship_mode)
+```
+
+### Profit per order for each shipping mode in €
+```{r}
+Avg_order_profit_by_shipmode <- superstore %>%
+  group_by(Ship.Mode) %>%
+  summarise(Avg_Order_Profit= round(sum(Profit)/n(),2))
+
+print(Avg_order_profit_by_shipmode)
+```
+
+### Suggest optimal shipping strategy based on findings
+
+1. Prioritize "First Class" shipping: Since this shipping mode offers the highest average order, it should be promoted as the premium option.
+2. "Same Day" and "Second Class" shipping: Should be marketed to customers who prioritize delivery speed but are more price-sensitive than those opting for "First Class."
+3. "Standard Class": Since this shipping mode offers the lowest average order, it should be promoted as the economic option for ustomers who are less time-sensitive and seek the lowest shipping cost.
+
+
+
+# Extra Challenge
+
+## Identify 3 actionalble business recommendations
+
+1. Home Office is the segment with less total revenue. Define strategies to increase sales and profit in this segment.
+2. Furniture is the category with less margins. Define strategies ti increase profitability.
+3. Define strategies to create sales peak in first half of the year.
+
+
+## Propose 2 new questions for deeper analysis
+
+1. Are there categories with negative profits?
+2. How do country performances compare? (best/worst performing country)
+
+## Estimate potential financial impact of your recommendation
+1. Increased total revenue for home office segment: increasing total sales.
+2. Increased margins for furniture category: sales and profits goes up, in return costs (not mentioned in dataset) would decrease.
+3. More sales peak in Q1 and Q2: total sales goes up in first half of the year.
+
+    
+  
+  
+
+
+
+  
+
